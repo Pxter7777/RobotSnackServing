@@ -19,17 +19,20 @@ class Wok(threading.Thread):
     def run(self):
         new_array = []
         while not self._stop_event.is_set():
-            if UART.com_port().in_waiting > 0:
-                recv_data = UART.com_port().read(UART.com_port().in_waiting)
-                data_array = list(recv_data)
-                if len(data_array) < 8:
-                    if data_array[0] == 136:  # 0x88
-                        new_array = data_array
+            try:
+                if UART.com_port().in_waiting > 0:
+                    recv_data = UART.com_port().read(UART.com_port().in_waiting)
+                    data_array = list(recv_data)
+                    if len(data_array) < 8:
+                        if data_array[0] == 136:  # 0x88
+                            new_array = data_array
+                        else:
+                            new_array.extend(data_array)
+                            self.data_parse(new_array)
                     else:
-                        new_array.extend(data_array)
-                        self.data_parse(new_array)
-                else:
-                    self.data_parse(data_array)
+                        self.data_parse(data_array)
+            except:
+                pass
 
             time.sleep(0.01)
 
