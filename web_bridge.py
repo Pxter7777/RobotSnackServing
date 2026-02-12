@@ -21,12 +21,11 @@ class WebBridge(QObject):
 
     @Slot(str)
     def sendAction(self, action: str):
-        # 檢查系統是否忙碌
+        
         if self._thread is not None:
             self.statusChanged.emit("[WARNING] 系統忙碌中，請稍候")
             return
-
-        # 定義一個內部函式，用來根據字串回傳對應的執行 function
+        
         def get_target_func(act_name):
             if act_name == "get_spoon":
                 return self.ctrl.get_spoon_flow
@@ -38,7 +37,7 @@ class WebBridge(QObject):
                 return lambda: self.ctrl.serve_peanuts(1)
             elif act_name == "serve_waffle":
                 return lambda: self.ctrl.serve_waffle(4)
-            elif act_name == "refill_peanut":
+            elif act_name == "refill":
                 return self.ctrl.grasp_and_dump_peanuts_flow
             elif act_name == "pan_heat":
                 return self.ctrl.pan_heat

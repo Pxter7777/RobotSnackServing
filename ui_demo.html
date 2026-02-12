@@ -536,7 +536,6 @@
       <div class="sim-view">
         <img
           id="mainStream"
-          src="http://127.0.0.1:5000/video_feed/usb"
           style="
             width: 100%;
             height: 100%;
@@ -581,7 +580,7 @@
           <div class="action-grid">
             <button class="btn btn-purple" onclick="openModal()"><i>📥</i>原料操作</button>
           </div>
-          <div id="ingredientModal" class="modal-overlay" onclick="closeModal()">
+          <div id="ingredientModal" class="modal-overlay" onclick="if (event.target === this) closeModal()">
             <div class="modal-content" onclick="event.stopPropagation()">
               <div id="modalHeader" class="modal-header" style="background-color: #81D8D0; color: white; padding: 15px; border-radius: 5px 5px 0 0; margin: -20px -20px 20px -20px; text-align: center; display: block;">
                 <h3 id="modalTitle" style="margin: 0; font-size: 20px;">原料操作</h3>
@@ -642,7 +641,7 @@
     </div>
   </div>
   <div id="colorModal" class="modal-overlay">
-    <div class="modal-card">
+    <div class="modal-card" onclick="event.stopPropagation()">
       <div class="modal-header">選擇杯子顏色</div>
       <div class="modal-body">
         <p>請輸入或選擇欲夾取的杯子顏色：</p>
@@ -656,7 +655,7 @@
       </div>
       <div class="modal-footer">
         <button class="modal-btn cancel" onclick="closeColorModal()">取消</button>
-        <button class="modal-btn confirm" onclick="confirmColor()">確認補充</button>
+        <button type="button" class="modal-btn confirm" onclick="confirmColor(event)">確認</button>
       </div>
     </div>
   </div>
@@ -670,7 +669,7 @@
 
     let refillState = {
       peanut: "blue",
-      anchovy: "blue"
+      anchovy: "green"
     };
     let currentRefillItem = "";
     /* ================================================== */
@@ -1178,29 +1177,38 @@
       document.getElementById('colorModal').style.display = 'flex';
     }
 
-    // 設定快速選擇顏色
     function setPreset(color) {
       document.getElementById('cupColorInput').value = color;
       refillState[currentRefillItem] = color;
     }
 
-    // 確認選擇並發送動作
-    function confirmColor() {
+
+    function confirmColor(event) {
+      if (event) {
+        event.preventDefault();    // ⭐ 加入這一行，防止預設行為（如表單提交）
+        event.stopPropagation();   // 阻止事件傳到外層 Modal
+    }
+
       const color = document.getElementById('cupColorInput').value;
-      
+
       if (color.trim() === "") {
-          alert("請輸入顏色！");
-          return;
+        alert("請輸入顏色！");
+        return;
       }
+
       refillState[currentRefillItem] = color;
-      // 執行發送：會送出如 refill_peanut|紅色
-      if (typeof sendAction === "function") {
-          // sendAction(`refill_${currentRefillItem}|${color}`);
-          setSystemMsg(`指令已發送: refill_${currentRefillItem} | ${color} cup`);
+
+      const btn = document.querySelector(
+        `#modalBody button[data-item="${currentRefillItem}"]`
+      );
+      if (btn) {
+        btn.innerHTML = `📥 ${btn.textContent.split('（')[0]}（${color}）`;
       }
-      
+
       closeColorModal();
     }
+
+
     window.addEventListener('keydown', function(event) {
       if (event.key === 'Escape') {
           closeModal();
@@ -1237,7 +1245,7 @@
         const fixedCams = [
             { id: "cam1", type: "cam1" },
             { id: "cam2", type: "cam2" },
-            { id: "cam3", type: "usb" },
+            { id: "cam3", type: "cam5" },
             { id: "cam4", type: "cam4" }
         ];
 
@@ -1341,13 +1349,9 @@
 
       if (modalBody) 
       {
-        // 無論有沒有新資料，進來第一件事就是把舊的清空
         modalBody.innerHTML = ''; 
 
-        // 檢查新 Config 是否有資料
         if (UI_CONFIG.modal_actions && Array.isArray(UI_CONFIG.modal_actions)) {
-          
-          // 更新標題 (如果有設定的話)
           if (modalTitle && UI_CONFIG.modal_title) {
               modalTitle.textContent = UI_CONFIG.modal_title;
           }
@@ -1355,15 +1359,15 @@
           UI_CONFIG.modal_actions.forEach(act => {
             const btn = document.createElement('button');
             btn.className = `btn ${act.color || 'btn-purple'}`;
-            btn.innerHTML = `📥 ${act.label}`;
-            
+            btn.innerHTML = ` ${act.label}`;
+            btn.dataset.item = act.action_id;
             btn.onclick = () => {
                 if (act.type === "refill") {
                     handleRefill(act.action_id);
                 } else {
                     sendAction(act.action_id);
                 }
-                closeModal();
+                // closeModal();
             };
             modalBody.appendChild(btn);
           });
@@ -1373,6 +1377,19 @@
           modalBody.innerHTML = '<p style="color:gray; padding:10px; text-align:center;">此模式無原料操作項目</p>';
           if (modalTitle) modalTitle.textContent = "原料操作"; 
         }
+
+        const confirmBtn = document.createElement('button');
+        confirmBtn.className = 'btn btn-purple';
+        confirmBtn.textContent = '📥 確認補充';
+
+        confirmBtn.onclick = () => {
+          // 🚧 測試階段：先不送顏色
+          sendAction('refill');
+          setSystemMsg('[INFO]Refill peanut.');
+          // closeModal();
+        };
+
+        modalBody.appendChild(confirmBtn);
       }  
     }
     

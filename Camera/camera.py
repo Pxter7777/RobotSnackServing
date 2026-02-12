@@ -81,7 +81,7 @@ class Camera:
 # ===== 使用範例 =====
 def main():
     cam = Camera()
-    cam.cam_init([4,6,2,0])
+    cam.cam_init([0])
     #for i in range(10):
     while True:
         frames=cam.capture(True)

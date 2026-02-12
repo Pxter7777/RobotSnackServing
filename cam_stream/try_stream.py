@@ -103,46 +103,6 @@ def zed_worker():
     zed_cam.camera.close()
 
 
-def usb_worker():
-    cap = cv2.VideoCapture(3, cv2.CAP_V4L2)
-    cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
-    if not cap.isOpened():
-        print("[USB] ❌ open failed")
-        return
-
-    ctx = zmq.Context.instance()
-    pub = ctx.socket(zmq.PUB)
-    pub.bind("tcp://*:9091")
-
-    print("[USB] worker started")
-
-    while running:
-        ret, frame_raw = cap.read()
-        if not ret:
-            time.sleep(0.02)
-            continue
-
-        # ===== 給 Flask UI=====
-        h, w, _ = frame_raw.shape
-        frame_ui = frame_raw[:, :w // 2] 
-
-        with frame_locks["usb"]:
-            latest_frames["usb"] = frame_ui
-
-        ok, jpg = cv2.imencode(".jpg", frame_raw)
-        if ok:
-            pub.send_multipart([
-                b"usb_cam",
-                str(int(time.time() * 1000)).encode(),
-                jpg.tobytes()
-            ])
-
-    cap.release()
-
-
 def ensenso_worker():
     ctx = zmq.Context.instance()
     sock = ctx.socket(zmq.SUB)

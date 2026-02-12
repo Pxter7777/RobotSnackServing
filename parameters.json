@@ -4,8 +4,8 @@
     "GetSpoonTime": 15,
     "SpoonPeanutsTime": 20,
     "DropSpoonTime": 10,
-    "PeanutsHeatFlipTime": 15,
-    "PeanutsHeatingTime": 10,
+    "PeanutsHeatFlipTime": 40,
+    "PeanutsHeatingTime": 40,
     "PeanutsFlipTime": 3,
     "Open1stLidTime": 7,
     "Open2ndLidTime": 10,
@@ -23,5 +23,5 @@
     "DropWaffleTime": 5,
     "WaffleHeatingTime": 155,
     "WaitForWaffleTime": 7,
-    "WaitForWafflePourTime": 15
+    "WaitForWafflePourTime": 11
 }

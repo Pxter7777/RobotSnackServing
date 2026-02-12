@@ -148,7 +148,7 @@ class TcpClient:
 
 if __name__ == "__main__":
     # === 使用範例 ===
-    client = TcpClient("192.168.1.99", 9000)
+    client = TcpClient("192.168.1.111", 9060)
     client.connect()
     try:
         while client.running:
