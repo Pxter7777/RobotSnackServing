@@ -6,10 +6,11 @@
     "configurations": [
     
         {
-            "name": "Python Debugger: Current File",
+            "name": "Python Debugger: Main",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
+            "program": "${workspaceFolder}/MainWindow_app.py",
+            "python": "${workspaceFolder}/.venv/bin/python",
             "console": "integratedTerminal"
         }
     ]
