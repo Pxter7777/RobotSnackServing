@@ -22,6 +22,12 @@ cd ~/ITRI-GraspGen/ROS2_server && \
 /usr/bin/python3 gripper_server.py
 ```
 
+- If need to sync with the other monitor for display:
+```bash
+cd ~/ITRI-GraspGen/ROS2_server && \
+/usr/bin/python3 gripper_server.py --real2sim
+```
+
 4. Isaac Sim(Optional, for GraspGen only):
 ```bash
 cd ~/ITRI-GraspGen/isaac-sim2real && \
@@ -29,7 +35,7 @@ omni_python sync_with_ROS2.py
 ```
 
 5. GraspGen Server(Optional, for GraspGen only):
-```bash
+```bash 
 cd ~/ITRI-GraspGen && \
 uv run scripts/mia_server.py --no-confirm
 ```
