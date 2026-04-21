@@ -182,6 +182,7 @@ class main_window_ctrl(QMainWindow):
 
             if 'self.tcp_thermal' not in globals():
                 try:
+                    return
                     self.tcp_thermal_init()
                 except Exception as e:
                     self.statusChanged.emit(f"[ERROR]tcp_thermal_init error: {e}\n")
@@ -189,6 +190,7 @@ class main_window_ctrl(QMainWindow):
                  
             if 'self.tcp_check_empty_cup' not in globals():
                 try:
+                    return
                     self.tcp_check_empty_cup_init()
                 except Exception as e:
                     self.statusChanged.emit(f"[ERROR]tcp_check_empty_cup_init error: {e}\n")
@@ -196,6 +198,7 @@ class main_window_ctrl(QMainWindow):
 
             if 'self.cam' not in globals():
                 try:
+                    return
                     self.cam_init()
                 except Exception as e:
                     self.statusChanged.emit(f"[ERROR]cam_init error: {e}\n")
@@ -203,6 +206,7 @@ class main_window_ctrl(QMainWindow):
 
             if 'self.tcp_check_waffle_lid' not in globals():
                 try:
+                    return
                     self.tcp_check_waffle_lid_init()
                 except Exception as e:
                     self.statusChanged.emit(f"[ERROR]tcp_check_empty_cup_init error: {e}\n")
@@ -1538,5 +1542,6 @@ class main_window_ctrl(QMainWindow):
         self.ui.textEdit_status.append(msg)
 
     def _emit_temp(self):
+        return
         temp = self.tcp_thermal.get_cur_temp()
         self.tempChanged.emit(temp)
