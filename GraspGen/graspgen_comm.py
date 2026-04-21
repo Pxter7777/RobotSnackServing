@@ -15,7 +15,7 @@ class GraspGenCommunication:
             if response.get("message") == "Success":
                 return response
             else:
-                raise ValueError("GraspGen server failed.")
+                return self.send_data(data)
         except Exception as e:
             raise e
 
